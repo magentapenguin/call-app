@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Call App</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="script.ts" type="module"></script>
+</head>
+
+<body>
+    <h1>Call App</h1>
+    <button id="start">Connect</button>
+    <div id="app" hidden>
+        <button id="exit">Exit</button>
+        <strong>Peer ID: <span id="peer-id-display"></span></strong>
+        <form id="peer-form">
+            <input type="text" id="peer-id" placeholder="Enter Peer ID" name="peer-id">
+            <button type="submit">Connect</button>
+            <button id="disconnect" disabled type="button">Disconnect</button>
+        </form>
+        <hr>
+        <strong>Local Video</strong>
+        <video id="local-video" muted></video>
+
+        <strong>Remote Video</strong>
+        <video id="remote-video" hidden></video>
+    </div>
+</body>
+
+</html>

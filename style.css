@@ -1,0 +1,57 @@
+:root {
+    --bg: #f8f8f8;
+    --fg: #111;
+    color: var(--fg);
+    background: var(--bg);
+}
+@media (prefers-color-scheme: dark) {
+    :root {
+        --bg: #112;
+        --fg: #f8f8f8;
+    }    
+}
+
+button, input, textarea {
+    font-family: inherit;
+    font-size: inherit;
+    color: inherit;
+    background: inherit;
+    border: 1px solid;
+    border-radius: 4px;
+    padding: 0.1em 0.5em;
+    margin: 0.5em 0;
+    font-weight: bold;
+}
+button {
+    cursor: pointer;
+}
+button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+button:active:not(:disabled) {
+    transform: scale(0.95);
+}
+button:hover {
+    background: var(--fg);
+    color: var(--bg);
+}
+
+
+#peer-form {
+    z-index: 1000;
+    background: var(--bg);
+    justify-content: center;
+    align-items: stretch;
+    flex-direction: column;
+}
+[hidden] {
+    display: none;
+}
+
+video {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+    display: block;
+}
