@@ -22,7 +22,7 @@ document.getElementById('start')!.addEventListener('click', async () => {
             video: {
                 width: { min: 1024, ideal: 1280, max: 1920 },
                 height: { min: 576, ideal: 720, max: 1080 },
-                frameRate: { ideal: 30, max: 60 }
+                frameRate: { ideal: 15, max: 30 }
             }, audio: true
         });
     }
