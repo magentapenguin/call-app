@@ -2,6 +2,8 @@ import { Peer } from 'peerjs';
 import type * as PeerJS from 'peerjs';
 import { customAlphabet } from 'nanoid';
 
+const status = document.getElementById('status') as HTMLSpanElement;
+
 const nanoid = customAlphabet('6789BCDFGHJKLMNPQRTWbcdfghjkmnpqrtwz', 20);
 
 let stream: MediaStream | null = null;
@@ -13,7 +15,8 @@ document.getElementById('exit')!.addEventListener('click', () => {
     stream = null;
     document.getElementById('app')!.hidden = true;
     document.getElementById('start')!.hidden = false;
-
+    peer?.destroy();
+    peer = null;
 });
 
 document.getElementById('start')!.addEventListener('click', async () => {
@@ -45,6 +48,8 @@ document.getElementById('start')!.addEventListener('click', async () => {
     peer.on('open', id => {
         console.log('My peer ID is: ' + id);
         document.getElementById('peer-id-display')!.textContent = id;
+        status.textContent = 'Ready';
+        status.classList.add('ready');
     });
 
     peer.on('call', call => {
@@ -52,19 +57,88 @@ document.getElementById('start')!.addEventListener('click', async () => {
         console.log('Incoming call');
         if (!stream) return;
         call.answer(stream);
-        call.on('stream', stream => {
+        initCall();
+    });
+
+    const form = document.getElementById('peer-form') as HTMLFormElement;
+    const connectBtn = form.querySelector('button[type="submit"]') as HTMLButtonElement;
+    connectBtn.disabled = false;
+    const disconnectBtn = document.getElementById('disconnect') as HTMLButtonElement;
+    disconnectBtn.disabled = true;
+
+    function closeCall() {
+        if (currentCall) {
+            currentCall.close();
+            currentCall = null;
+        }
+        connectBtn.disabled = false;
+        disconnectBtn.disabled = true;
+        status.textContent = 'Ready';
+        status.classList.remove('connected');
+        status.classList.add('ready');
+    }
+
+    function initCall() {
+        if (!currentCall) return;
+        status.textContent = 'Connected to ' + currentCall.peer;
+        status.classList.remove('ready');
+        status.classList.add('connected');
+        currentCall.on('stream', stream => {
             const video = document.getElementById('remote-video') as HTMLVideoElement | null;
-            video!.hidden = false;
             if (video) {
                 video.srcObject = stream;
                 video.play();
             }
         });
+        currentCall.on('close', () => {
+            console.log('Call closed');
+            closeCall();
+        });
+        connectBtn.disabled = true;
+        disconnectBtn.disabled = false;
+    }
+
+    peer.on('error', err => {
+        // Handle error
+        console.error(err);
+        alert(err.message);
+        closeCall();
+    });
+
+    peer.on('disconnected', () => {
+        console.log('Peer disconnected');
+        closeCall();
+        // Reconnect
+        peer?.reconnect();
     });
 
     let currentCall: PeerJS.MediaConnection | null = null;
 
-    const form = document.getElementById('peer-form') as HTMLFormElement | null;
+    if (location.hash) {
+        const id = location.hash.slice(1);
+        const autojoindialog = document.getElementById('auto-join-dialog') as HTMLDialogElement | null;
+        if (autojoindialog) {
+            autojoindialog.showModal();
+        }
+        document.getElementById('auto-join-yes')!.addEventListener('click', () => {
+            if (!stream) return;
+            closeCall();
+            if (!peer) return;
+            currentCall = peer.call(id, stream);
+            initCall();
+            if (autojoindialog) {
+                autojoindialog.close();
+            }
+        });
+        document.getElementById('auto-join-no')!.addEventListener('click', () => {
+            if (autojoindialog) {
+                autojoindialog.close();
+                location.hash = '';
+            }
+        });
+        document.getElementById('auto-join-id')!.textContent = id;
+    }
+
     if (form) {
         form.addEventListener('submit', e => {
             e.preventDefault();
@@ -72,20 +146,21 @@ document.getElementById('start')!.addEventListener('click', async () => {
             const id = data.get('peer-id') as string;
             console.log('Connecting to', id);
             if (!stream) return;
-            if (currentCall) {
-                currentCall.close();
-            }
+            closeCall();
             if (!peer) return;
             currentCall = peer.call(id, stream);
-            currentCall.on('stream', stream => {
-                const video = document.getElementById('remote-video') as HTMLVideoElement | null;
-                if (video) {
-                    video.srcObject = stream;
-                    video.addEventListener('loadedmetadata', () => {
-                        video.play();
-                    }, { once: true });
-                }
-            });
+            initCall();
         });
     }
+    document.getElementById('peer-id-copy')!.addEventListener('click', () => {
+        if (!peer) return;
+        navigator.clipboard.writeText(peer.id);
+    });
+    document.getElementById('peer-id-share')!.addEventListener('click', () => {
+        if (!peer) return;
+        navigator.share({ title: 'Join my video call', text: 'Join my video call', url: location.origin + location.pathname + '#' + peer.id });
+    });
+    disconnectBtn.addEventListener('click', () => {
+        closeCall();
+    });
 });

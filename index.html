@@ -11,21 +11,41 @@
 
 <body>
     <h1>Call App</h1>
+    <dialog id="auto-join-dialog">
+        <p>Do you want to join the call?</p>
+        <code>ID:<span id="auto-join-id"></span></code>
+        <br>
+        <div class="bar">
+            <button id="auto-join-yes">Yes</button>
+            <button id="auto-join-no">No</button>
+        </div>
+    </dialog>
+
     <button id="start">Connect</button>
     <div id="app" hidden>
         <button id="exit">Exit</button>
-        <strong>Peer ID: <span id="peer-id-display"></span></strong>
+        <strong>Peer ID: <span id="peer-id-display"></span> <button id="peer-id-copy">Copy</button> <button
+                id="peer-id-share">Share</button></strong>
         <form id="peer-form">
-            <input type="text" id="peer-id" placeholder="Enter Peer ID" name="peer-id">
+            <input type="text" id="peer-id" placeholder="Enter Peer ID" name="peer-id" required>
             <button type="submit">Connect</button>
             <button id="disconnect" disabled type="button">Disconnect</button>
         </form>
+        <div>
+            <strong>Status: <span id="status">--</span></strong>
+        </div>
         <hr>
-        <strong>Local Video</strong>
-        <video id="local-video" muted></video>
+        <div class="video-container">
+            <div>
+                <strong>Local Video</strong>
+                <video id="local-video" muted></video>
+            </div>
 
-        <strong>Remote Video</strong>
-        <video id="remote-video"></video>
+            <div>
+                <strong>Remote Video</strong>
+                <video id="remote-video"></video>
+            </div>
+        </div>
     </div>
 </body>
 
