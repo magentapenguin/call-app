@@ -107,11 +107,19 @@ dialog[open] {
 }
 
 #status.ready {
-    color: yellowgreen;
+    color: #980;
 }
 #status.error {
     color: red;
 }
 #status.connected {
-    color: green;
+    color: #060;
+}
+@media (prefers-color-scheme: dark) {
+    #status.ready {
+        color: #ff0;
+    }
+    #status.connected {
+        color: #0f2;
+    }
 }

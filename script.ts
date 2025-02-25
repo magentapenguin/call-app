@@ -101,8 +101,8 @@ document.getElementById('start')!.addEventListener('click', async () => {
     peer.on('error', err => {
         // Handle error
         console.error(err);
-        alert(err.message);
         closeCall();
+        alert(err.message);
     });
 
     peer.on('disconnected', () => {
