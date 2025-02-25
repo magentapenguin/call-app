@@ -1,8 +1,10 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap');
 :root {
     --bg: #f8f8f8;
     --fg: #111;
     color: var(--fg);
     background: var(--bg);
+    font-family: 'Inter', sans-serif;
 }
 @media (prefers-color-scheme: dark) {
     :root {
@@ -55,6 +57,8 @@ video {
     object-fit: contain;
     background-color: black;
     display: block;
+    border-radius: 4px;
+    border: 1px solid var(--fg);
 }
 dialog {
     background-color: var(--bg);
@@ -83,25 +87,15 @@ dialog[open] {
     flex: auto;
 }
 .video-container {
-    display: flex;
-    justify-content: center;
-    align-items: stretch;
-    width: 100%;
-    overflow: hidden;
-    gap: 0.5em;
-}
-.video-container > * {
-    flex: 1;
-    display: flex;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1.2em 1fr min-content;
     justify-content: center;
     align-items: center;
     gap: 0.5em;
-    flex-direction: column;
+    width: 100%;
+    overflow: hidden;
 }
-.video-container > * video {
-    flex: 1;
-}
-
 :user-invalid {
     border-color: red;
 }

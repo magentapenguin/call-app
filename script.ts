@@ -65,6 +65,18 @@ document.getElementById('start')!.addEventListener('click', async () => {
     connectBtn.disabled = false;
     const disconnectBtn = document.getElementById('disconnect') as HTMLButtonElement;
     disconnectBtn.disabled = true;
+    const muteBtn = document.getElementById('mute') as HTMLButtonElement;
+    muteBtn.addEventListener('click', () => {
+        if (!stream) return;
+        stream.getAudioTracks().forEach(track => track.enabled = !track.enabled);
+        muteBtn.textContent = stream.getAudioTracks().some(track => track.enabled) ? 'Mute Audio' : 'Unmute Audio';
+    });
+    const pauseBtn = document.getElementById('pause') as HTMLButtonElement;
+    pauseBtn.addEventListener('click', () => {
+        if (!stream) return;
+        stream.getVideoTracks().forEach(track => track.enabled = !track.enabled);
+        pauseBtn.textContent = stream.getVideoTracks().some(track => track.enabled) ? 'Pause Video' : 'Resume Video';
+    });
 
     function closeCall() {
         if (currentCall) {
