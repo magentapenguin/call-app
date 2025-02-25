@@ -117,3 +117,6 @@ dialog[open] {
         color: #0f2;
     }
 }
+*, *::before, *::after {
+    box-sizing: border-box;
+}

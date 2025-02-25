@@ -24,8 +24,8 @@
     <button id="start">Connect</button>
     <div id="app" hidden>
         <button id="exit">Exit</button>
-        <strong>Peer ID: <span id="peer-id-display"></span> <button id="peer-id-copy">Copy</button> <button
-                id="peer-id-share">Share</button></strong>
+        <div>Peer ID: <span id="peer-id-display"></span> <button id="peer-id-copy">Copy</button> <button
+                id="peer-id-share">Share</button></div>
         <form id="peer-form">
             <input type="text" id="peer-id" placeholder="Enter Peer ID" name="peer-id" required>
             <button type="submit">Connect</button>
@@ -35,9 +35,10 @@
             <strong>Status: <span id="status">--</span></strong>
         </div>
         <hr>
+        <canvas id="stream-overlay" hidden></canvas>
         <div class="video-container">
-            <strong>Local Video</strong>
-            <strong>Remote Video</strong>
+            <div>Local Video</div>
+            <div>Remote Video</div>
 
             <video id="local-video" muted></video>
             <video id="remote-video"></video>

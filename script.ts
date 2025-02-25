@@ -2,13 +2,53 @@ import { Peer } from 'peerjs';
 import type * as PeerJS from 'peerjs';
 import { customAlphabet } from 'nanoid';
 
+const overlaycanvas = document.getElementById('stream-overlay') as HTMLCanvasElement;
+const octx = overlaycanvas.getContext('2d')!;
+
 const status = document.getElementById('status') as HTMLSpanElement;
 
-const nanoid = customAlphabet('6789BCDFGHJKLMNPQRTWbcdfghjkmnpqrtwz', 20);
+const nanoid = customAlphabet('6789BCDFGHJKLMNPQRTWbcdfghjkmnpqrtwz', 12);
+
+let mediaStream: MediaStream | null = null;
+let audioStream: MediaStream | null = null;
 
 let stream: MediaStream | null = null;
+let vidstream: HTMLVideoElement = document.createElement('video');
+document.body.appendChild(vidstream);
+vidstream.hidden = true;
+vidstream.muted = true;
 
 let peer: Peer | null = null;
+
+const muteIcon = new Image();
+muteIcon.src = 'mic-off.png';
+
+
+function drawOverlay() {
+    octx.drawImage(vidstream,0,0)
+    const muted = stream?.getAudioTracks().some(track => !track.enabled);
+    const paused = mediaStream?.getVideoTracks().some(track => !track.enabled);
+    if (muted) {
+        octx.fillStyle = 'rgba(0, 0, 0, 0.5)';
+        octx.arc(overlaycanvas.width - 70, 70, 50, 0, 2 * Math.PI);
+        octx.fill();
+        octx.fillStyle = 'white';
+        octx.drawImage(muteIcon, overlaycanvas.width - 100, 40, 60, 60);
+    }
+    if (paused) {
+        octx.fillStyle = 'white';
+        octx.font = '64px "Inter", sans-serif';
+        octx.textBaseline = 'top';
+        octx.fillText('Paused', 30, 30);
+    }
+    if (document.visibilityState == 'hidden') {
+        octx.fillStyle = 'rgba(0, 0, 0, 0.5)';
+        octx.fillRect(0, 0, overlaycanvas.width, overlaycanvas.height);
+    }
+    requestAnimationFrame(drawOverlay);
+}
+
+drawOverlay();
 
 document.getElementById('exit')!.addEventListener('click', () => {
     stream?.getTracks().forEach(track => track.stop());
@@ -21,12 +61,32 @@ document.getElementById('exit')!.addEventListener('click', () => {
 
 document.getElementById('start')!.addEventListener('click', async () => {
     try {
-        stream = await navigator.mediaDevices.getUserMedia({
+        let tmpStream = await navigator.mediaDevices.getUserMedia({
             video: {
-                width: { min: 1024, ideal: 1280, max: 1920 },
-                height: { min: 576, ideal: 720, max: 1080 },
+                width: { min: 1024, ideal: 1280, max: 1280 },
+                height: { min: 576, ideal: 720, max: 720 },
                 frameRate: { ideal: 15, max: 30 }
             }, audio: true
+        });
+        mediaStream = new MediaStream();
+        audioStream = new MediaStream();
+        stream = new MediaStream();
+        tmpStream.getTracks().forEach(track => {
+            if (track.kind === 'video') {
+                mediaStream?.addTrack(track);
+            } else if (track.kind === 'audio') {
+                audioStream?.addTrack(track);
+            }
+        });
+        vidstream.srcObject = mediaStream;
+        vidstream.play();
+        overlaycanvas.width = mediaStream.getVideoTracks()[0].getSettings().width!;
+        overlaycanvas.height = mediaStream.getVideoTracks()[0].getSettings().height!;
+        overlaycanvas.captureStream(60).getTracks().forEach(track => {
+            stream?.addTrack(track);
+        });
+        audioStream.getTracks().forEach(track => {
+            stream?.addTrack(track);
         });
     }
     catch (err) {
@@ -73,9 +133,9 @@ document.getElementById('start')!.addEventListener('click', async () => {
     });
     const pauseBtn = document.getElementById('pause') as HTMLButtonElement;
     pauseBtn.addEventListener('click', () => {
-        if (!stream) return;
-        stream.getVideoTracks().forEach(track => track.enabled = !track.enabled);
-        pauseBtn.textContent = stream.getVideoTracks().some(track => track.enabled) ? 'Pause Video' : 'Resume Video';
+        if (!mediaStream) return;
+        mediaStream.getVideoTracks().forEach(track => track.enabled = !track.enabled);
+        pauseBtn.textContent = mediaStream.getVideoTracks().some(track => track.enabled) ? 'Pause Video' : 'Resume Video';
     });
 
     function closeCall() {
