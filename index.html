@@ -11,7 +11,9 @@
 </head>
 
 <body>
-    <h1>Call App</h1>
+    <h1>
+        <img src="favicon.svg" alt="Call App Logo" class="icon" draggable="false"> Call App
+    </h1>
     <dialog id="auto-join-dialog">
         <p>Do you want to join the call?</p>
         <code>ID:<span id="auto-join-id"></span></code>
@@ -25,7 +27,7 @@
     <button id="start">Connect</button>
     <div id="app" hidden>
         <button id="exit">Exit</button>
-        <div>Peer ID: <span id="peer-id-display"></span> <button id="peer-id-copy">Copy</button> <button
+        <div>Peer ID: <strong id="peer-id-display"></strong> <button id="peer-id-copy">Copy</button> <button
                 id="peer-id-share">Share</button></div>
         <form id="peer-form">
             <input type="text" id="peer-id" placeholder="Enter Peer ID" name="peer-id" required>
@@ -41,8 +43,8 @@
             <div>Local Video</div>
             <div>Remote Video</div>
 
-            <video id="local-video" muted></video>
-            <video id="remote-video"></video>
+            <video id="local-video" muted disablepictureinpicture></video>
+            <video id="remote-video" disablepictureinpicture></video>
 
 
             <!-- Mute btn -->

@@ -25,7 +25,10 @@ muteIcon.src = 'mic-off.png';
 
 
 function drawOverlay() {
-    octx.drawImage(vidstream,0,0)
+    octx.scale(-1, 1);
+    octx.translate(-overlaycanvas.width, 0);
+    octx.drawImage(vidstream, 0, 0);
+    octx.setTransform(1, 0, 0, 1, 0, 0);
     const muted = stream?.getAudioTracks().some(track => !track.enabled);
     const paused = mediaStream?.getVideoTracks().some(track => !track.enabled);
     if (muted) {
@@ -38,8 +41,9 @@ function drawOverlay() {
     if (paused) {
         octx.fillStyle = 'white';
         octx.font = '64px "Inter", sans-serif';
-        octx.textBaseline = 'top';
-        octx.fillText('Paused', 30, 30);
+        octx.textAlign = 'center';
+        octx.textBaseline = 'middle';
+        octx.fillText('No Video', overlaycanvas.width / 2, overlaycanvas.height / 2);
     }
     if (document.visibilityState == 'hidden') {
         octx.fillStyle = 'rgba(0, 0, 0, 0.5)';
@@ -60,12 +64,13 @@ document.getElementById('exit')!.addEventListener('click', () => {
 });
 
 document.getElementById('start')!.addEventListener('click', async () => {
+    document.getElementById('start')!.hidden = true;
     try {
         let tmpStream = await navigator.mediaDevices.getUserMedia({
             video: {
                 width: { min: 1024, ideal: 1280, max: 1280 },
                 height: { min: 576, ideal: 720, max: 720 },
-                frameRate: { ideal: 15, max: 30 }
+                frameRate: { ideal: 30, max: 45 }
             }, audio: true
         });
         mediaStream = new MediaStream();
@@ -82,7 +87,7 @@ document.getElementById('start')!.addEventListener('click', async () => {
         vidstream.play();
         overlaycanvas.width = mediaStream.getVideoTracks()[0].getSettings().width!;
         overlaycanvas.height = mediaStream.getVideoTracks()[0].getSettings().height!;
-        overlaycanvas.captureStream(60).getTracks().forEach(track => {
+        overlaycanvas.captureStream(30).getTracks().forEach(track => {
             stream?.addTrack(track);
         });
         audioStream.getTracks().forEach(track => {
@@ -91,9 +96,9 @@ document.getElementById('start')!.addEventListener('click', async () => {
     }
     catch (err) {
         console.error('Error accessing media devices.', err);
+        alert('Error accessing media devices. ' + err.message);
         return;
     }
-    document.getElementById('start')!.hidden = true;
     document.getElementById('app')!.hidden = false;
 
     const video = document.getElementById('local-video') as HTMLVideoElement | null;
@@ -230,7 +235,11 @@ document.getElementById('start')!.addEventListener('click', async () => {
     });
     document.getElementById('peer-id-share')!.addEventListener('click', () => {
         if (!peer) return;
-        navigator.share({ title: 'Join my video call', text: 'Join my video call', url: location.origin + location.pathname + '#' + peer.id });
+        if (!navigator.share) {
+            alert('Web Share API not supported');
+            return;
+        }
+        navigator.share({ title: 'Join my video call', text: 'Join call', url: location.origin + location.pathname + '#' + peer.id });
     });
     disconnectBtn.addEventListener('click', () => {
         closeCall();

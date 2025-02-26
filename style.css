@@ -2,6 +2,8 @@
 :root {
     --bg: #f8f8f8;
     --fg: #111;
+    --theme-steps: #9150f1 0%, #4d50f1 25%, #44cbf1 50%, #69ffa1 75%, #27fe58 100%;
+    --theme-gradient: linear-gradient(135deg, var(--theme-steps));
     color: var(--fg);
     background: var(--bg);
     font-family: 'Inter', sans-serif;
@@ -35,8 +37,13 @@ button:active:not(:disabled) {
     transform: scale(0.95);
 }
 button:hover {
-    background: var(--fg);
-    color: var(--bg);
+    background: var(--theme-gradient);
+    background-clip: border-box;
+    background-repeat: no-repeat;
+    color: #111;
+}
+input:focus-visible, textarea:focus-visible, button:focus-visible {
+    outline: 2px solid #4d7cff;
 }
 
 
@@ -58,7 +65,6 @@ video {
     background-color: black;
     display: block;
     border-radius: 4px;
-    border: 1px solid var(--fg);
 }
 dialog {
     background-color: var(--bg);
@@ -119,4 +125,12 @@ dialog[open] {
 }
 *, *::before, *::after {
     box-sizing: border-box;
+}
+.icon {
+    width: 1em;
+    height: 1em;
+    vertical-align: -0.125em;
+}
+hr {
+    color: currentColor;
 }
