@@ -20,7 +20,7 @@ button, input, textarea {
     font-size: inherit;
     color: inherit;
     background: inherit;
-    border: 1px solid;
+    border: 1px solid var(--fg);
     border-radius: 4px;
     padding: 0.1em 0.5em;
     margin: 0.5em 0;
@@ -41,6 +41,7 @@ button:hover {
     background-clip: border-box;
     background-repeat: no-repeat;
     color: #111;
+    border-color: var(--bg);
 }
 input:focus-visible, textarea:focus-visible, button:focus-visible {
     outline: 2px solid #4d7cff;
