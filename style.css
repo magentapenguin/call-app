@@ -135,3 +135,11 @@ dialog[open] {
 hr {
     color: currentColor;
 }
+
+p {
+    margin: 0.2em 0;
+}
+
+body:has(#app[hidden]):has(#start[hidden])::after {
+    content: 'Loading...';
+}

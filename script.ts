@@ -99,7 +99,6 @@ document.getElementById('start')!.addEventListener('click', async () => {
         alert('Error accessing media devices. ' + err.message);
         return;
     }
-    document.getElementById('app')!.hidden = false;
 
     const video = document.getElementById('local-video') as HTMLVideoElement | null;
     video!.hidden = false;
@@ -115,6 +114,7 @@ document.getElementById('start')!.addEventListener('click', async () => {
         document.getElementById('peer-id-display')!.textContent = id;
         status.textContent = 'Ready';
         status.classList.add('ready');
+        document.getElementById('app')!.hidden = false;
     });
 
     peer.on('call', call => {
@@ -233,10 +233,27 @@ document.getElementById('start')!.addEventListener('click', async () => {
         if (!peer) return;
         navigator.clipboard.writeText(peer.id);
     });
+
+    const shareErrorDialog = document.getElementById('share-error') as HTMLDialogElement;
+    const shareErrorClose = document.getElementById('share-error-close') as HTMLButtonElement;
+    shareErrorClose.addEventListener('click', () => {
+        shareErrorDialog.close();
+    });
+    const shareErrorMsg = document.getElementById('share-error-message') as HTMLParagraphElement;
+    const shareCopyBtn = document.getElementById('share-error-copy') as HTMLButtonElement;
+    shareCopyBtn.addEventListener('click', () => {
+        const url = document.getElementById('share-error-copy-text') as HTMLSpanElement;
+        navigator.clipboard.writeText(url.innerText);
+    });
+
+
     document.getElementById('peer-id-share')!.addEventListener('click', () => {
         if (!peer) return;
         if (!navigator.share) {
-            alert('Web Share API not supported');
+            shareErrorMsg.textContent = 'Your browser does not support the Web Share API.';
+            const url = document.getElementById('share-error-copy-text') as HTMLSpanElement;
+            url.textContent = location.origin + location.pathname + '#' + peer.id;
+            shareErrorDialog.showModal();
             return;
         }
         navigator.share({ title: 'Join my video call', text: 'Join call', url: location.origin + location.pathname + '#' + peer.id });
