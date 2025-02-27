@@ -97,6 +97,7 @@ document.getElementById('start')!.addEventListener('click', async () => {
     catch (err) {
         console.error('Error accessing media devices.', err);
         alert('Error accessing media devices. ' + err.message);
+        document.getElementById('start')!.hidden = false;
         return;
     }
 

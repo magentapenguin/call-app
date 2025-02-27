@@ -1,4 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap');
+
 :root {
     --bg: #f8f8f8;
     --fg: #111;
@@ -8,14 +9,17 @@
     background: var(--bg);
     font-family: 'Inter', sans-serif;
 }
+
 @media (prefers-color-scheme: dark) {
     :root {
         --bg: #112;
         --fg: #f8f8f8;
-    }    
+    }
 }
 
-button, input, textarea {
+button,
+input,
+textarea {
     font-family: inherit;
     font-size: inherit;
     color: inherit;
@@ -26,16 +30,20 @@ button, input, textarea {
     margin: 0.5em 0;
     font-weight: bold;
 }
+
 button {
     cursor: pointer;
 }
+
 button:disabled {
     opacity: 0.5;
     cursor: not-allowed;
 }
+
 button:active:not(:disabled) {
     transform: scale(0.95);
 }
+
 button:hover {
     background: var(--theme-gradient);
     background-clip: border-box;
@@ -43,7 +51,10 @@ button:hover {
     color: #111;
     border-color: var(--bg);
 }
-input:focus-visible, textarea:focus-visible, button:focus-visible {
+
+input:focus-visible,
+textarea:focus-visible,
+button:focus-visible {
     outline: 2px solid #4d7cff;
 }
 
@@ -55,18 +66,20 @@ input:focus-visible, textarea:focus-visible, button:focus-visible {
     align-items: stretch;
     flex-direction: column;
 }
+
 [hidden] {
     display: none;
 }
 
 video {
     width: 100%;
-    height: 100%;
+    max-height: 100%;
     object-fit: contain;
     background-color: black;
     display: block;
     border-radius: 4px;
 }
+
 dialog {
     background-color: var(--bg);
     color: var(--fg);
@@ -75,9 +88,11 @@ dialog {
     flex-direction: column;
     align-items: stretch;
 }
+
 dialog[open] {
     display: flex;
 }
+
 ::backdrop {
     background: rgba(0, 0, 0, 0.5);
     backdrop-filter: blur(5px);
@@ -90,19 +105,49 @@ dialog[open] {
     padding: 0em;
     gap: 0.5em;
 }
+
 .bar button {
     flex: auto;
 }
+
 .video-container {
     display: grid;
+    grid-template-areas: "lcl-head rmt-head" "local-video remote-video" "bar bar";
     grid-template-columns: 1fr 1fr;
-    grid-template-rows: 1.2em 1fr min-content;
+    grid-template-rows: 1.1em minmax(12em, 1fr) min-content;
     justify-content: center;
     align-items: center;
     gap: 0.5em;
     width: 100%;
+    height: min-content;
     overflow: hidden;
 }
+
+@media (max-width: 800px) {
+    .video-container {
+        grid-template-areas: "lcl-head" "local-video" "rmt-head" "remote-video" "bar";
+        grid-template-columns: 1fr;
+        grid-template-rows: 1.1em minmax(12em, 1fr) 1.1em minmax(12em, 1fr) min-content;
+    }
+}
+
+#local-video {
+    grid-area: local-video;
+}
+#remote-video {
+    grid-area: remote-video;
+}
+.rmt-head {
+    grid-area: rmt-head;
+}
+.lcl-head {
+    grid-area: lcl-head;
+}
+.video-container .bar {
+    grid-area: bar;
+}
+
+
 :user-invalid {
     border-color: red;
 }
@@ -110,28 +155,37 @@ dialog[open] {
 #status.ready {
     color: #980;
 }
+
 #status.error {
     color: red;
 }
+
 #status.connected {
     color: #060;
 }
+
 @media (prefers-color-scheme: dark) {
     #status.ready {
         color: #ff0;
     }
+
     #status.connected {
         color: #0f2;
     }
 }
-*, *::before, *::after {
+
+*,
+*::before,
+*::after {
     box-sizing: border-box;
 }
+
 .icon {
     width: 1em;
     height: 1em;
     vertical-align: -0.125em;
 }
+
 hr {
     color: currentColor;
 }
@@ -140,6 +194,35 @@ p {
     margin: 0.2em 0;
 }
 
-body:has(#app[hidden]):has(#start[hidden])::after {
+main:has(#app[hidden]):haS(#start[hidden])::after {
     content: 'Loading...';
+    color: color-mix(in srgb, var(--bg) 50%, var(--fg) 50%)
+}
+
+main {
+    flex: 1;
+    padding: 0.5em;
+    padding-top: 0;
+}
+html, body {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    margin: 0;
+    padding: 0;
+}
+h1, h2, h3, h4, h5, h6 {
+    margin: 0.2em 0;
+}
+
+footer {
+    text-align: center;
+    padding-bottom: 0.1em;
+}
+:any-link {
+    color: #4d7cff;
+    text-underline-offset: 0.1em;
+}
+:any-link:hover {
+    color: #799dff;
 }
